@@ -1,0 +1,8 @@
+{
+    "recommendations": [
+        "DavidAnson.vscode-markdownlint",
+        "redhat.fabric8-analytics",
+        "streetsidesoftware.code-spell-checker",
+        "vscjava.vscode-java-pack",
+    ]
+}
