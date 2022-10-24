@@ -23,8 +23,10 @@ This code has been derived from the NARA File Analyzer and Metadata Harvester wh
 
 ## Local Development
 
-- Download amd install [Adoptium Eclipse Temurin JDK 17](https://adoptium.net/). Don't forget to select the option to set the `JAVA_HOME` environment variable.
+- Download amd install [Adoptium Eclipse Temurin JDK 17](https://adoptium.net/).
+Don't forget to select the option to set the `JAVA_HOME` environment variable.
 - [Install Maven using Chocolatey](https://community.chocolatey.org/packages/maven) or [Install Maven Manually](https://maven.apache.org/download.cgi).
+- Download and install [VS Code](https://code.visualstudio.com/download).
 - Clone this code to your computer
 - Run `mvn install`
 - Detailed Installation Instructions: <https://github.com/Georgetown-University-Libraries/File-Analyzer/wiki/Installation-instructions>
