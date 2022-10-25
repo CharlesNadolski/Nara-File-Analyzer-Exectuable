@@ -1,5 +1,6 @@
 {
     "recommendations": [
+        "bierner.github-markdown-preview",
         "DavidAnson.vscode-markdownlint",
         "redhat.fabric8-analytics",
         "streetsidesoftware.code-spell-checker",

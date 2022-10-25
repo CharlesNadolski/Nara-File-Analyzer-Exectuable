@@ -43,3 +43,6 @@ buildNumber.properties
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 
+# JPackage generated installers
+*FileAnalyzer-*.exe
+*FileAnalyzer-*.deb
