@@ -1,0 +1,164 @@
+# This workflow will build installers for multiple OSes using Maven and jpackage, and then publish it to GitHub packages when a release is created
+# For more inspiration see: https://github.com/sualeh/build-jpackage/blob/master/.github/workflows/build-jpackage.yml
+
+name: Build Installers
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build-linux-installer:
+    name: Build Installer on Linux
+    permissions:
+      contents: read
+      packages: write
+    runs-on: ubuntu-latest
+    steps:
+    
+    # SETUP BUILD ENVIRONMENT
+    - uses: actions/checkout@v3
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+        settings-path: ${{ github.workspace }} # location for the settings.xml file
+
+    # BUILD FOR DISTRIBUTION
+    - name: Build with Maven
+      run: |
+        mvn -B package
+        jpackage --verbose --app-version 2.0 --input core/target --main-jar CoreFileAnalyzer-2.0.jar --linux-menu-group Utility;FileTools;Java
+        jpackage --verbose --app-version 2.0  -input dspace/target --main-jar DSpaceFileAnalyzer-2.0.jar --linux-menu-group Utility;FileTools;Java
+        jpackage --verbose --app-version 2.0 --input demo/target --main-jar DemoFileAnalyzer-2.0.jar --linux-menu-group Utility;FileTools;Java
+
+    # SAVE INSTALLER
+    - id: upload-installer
+      name: Upload installer
+      uses: actions/upload-artifact@v3
+      with:
+        path: ./*.deb
+        name: linux-installer
+        retention-days: 1
+
+  build-windows-installer:
+    name: Build Installer on Windows
+    permissions:
+      contents: read
+      packages: write
+    runs-on: windows-latest
+    steps:
+
+    # SETUP BUILD ENVIRONMENT
+    - uses: actions/checkout@v3
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+        settings-path: ${{ github.workspace }} # location for the settings.xml file
+
+    # BUILD FOR DISTRIBUTION
+    - name: Build with Maven
+      run: |
+        mvn -B package
+        jpackage --verbose --app-version 2.0 --input core/target --main-jar CoreFileAnalyzer-2.0.jar --win-menu --win-per-user-install
+        jpackage --verbose --app-version 2.0  -input dspace/target --main-jar DSpaceFileAnalyzer-2.0.jar --win-menu --win-per-user-install
+        jpackage --verbose --app-version 2.0 --input demo/target --main-jar DemoFileAnalyzer-2.0.jar --win-menu --win-per-user-install
+        
+    # SAVE INSTALLER
+    - id: upload-installer
+      name: Upload installer
+      uses: actions/upload-artifact@v3
+      with:
+        path: ./*.exe
+        name: windows-installer
+        retention-days: 1
+
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: [build-linux-installer, build-windows-installer]
+    steps:
+
+    # DOWNLOAD INSTALLERS
+    - id: download-linux-installer
+      name: Download Linux installer
+      uses: actions/download-artifact@v3
+      with:
+        name: linux-installer
+
+    - id: download-windows-installer
+      name: Download Windows installer
+      uses: actions/download-artifact@v3
+      with:
+        name: windows-installer
+
+    # CREATE GITHUB RELEASE AND ADD ASSETS
+    - id: create-release
+      name: Create GitHub release
+      uses: actions/create-release@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: release-${{ github.sha }}
+        release_name: release-${{ github.sha }}
+        draft: false
+        prerelease: false
+    - name: Release Core Linux installer
+      uses: actions/upload-release-asset@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create-release.outputs.upload_url }}
+        asset_path: FileAnalyzer-2.0.deb
+        asset_name: FileAnalyzer-2.0.deb
+        asset_content_type: application/x-binary
+    - name: Release DSpace Linux installer
+      uses: actions/upload-release-asset@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create-release.outputs.upload_url }}
+        asset_path: DSpaceFileAnalyzer-2.0.deb
+        asset_name: DSpaceFileAnalyzer-2.0.deb
+        asset_content_type: application/x-binary
+    - name: Release Demo Linux installer
+      uses: actions/upload-release-asset@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create-release.outputs.upload_url }}
+        asset_path: DemoFileAnalyzer-2.0.deb
+        asset_name: DemoFileAnalyzer-2.0.deb
+        asset_content_type: application/x-binary
+    - name: Release Core Windows installer
+      uses: actions/upload-release-asset@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create-release.outputs.upload_url }}
+        asset_path: FileAnalyzer-2.0.exe
+        asset_name: FileAnalyzer-2.0.exe
+        asset_content_type: application/x-binary
+    - name: Release DSpace Windows installer
+      uses: actions/upload-release-asset@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create-release.outputs.upload_url }}
+        asset_path: DSpaceFileAnalyzer-2.0.exe
+        asset_name: DSpaceFileAnalyzer-2.0.exe
+        asset_content_type: application/x-binary
+    - name: Release Demo Windows installer
+      uses: actions/upload-release-asset@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create-release.outputs.upload_url }}
+        asset_path: DemoFileAnalyzer-2.0.exe
+        asset_name: DemoFileAnalyzer-2.0.exe
+        asset_content_type: application/x-binary
