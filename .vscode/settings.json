@@ -4,5 +4,6 @@
         "dspace",
         "Temurin",
         "Tika",
-    ]
+    ],
+    "java.configuration.updateBuildConfiguration": "automatic"
 }
