@@ -1,4 +1,4 @@
-# NARA File Analyzer
+# File Analyzer
 
 ## PURPOSE
 
