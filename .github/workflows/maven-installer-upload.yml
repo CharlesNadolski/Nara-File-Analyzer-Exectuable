@@ -1,5 +1,5 @@
-# This workflow will build installers for multiple OSes using Maven and jpackage, and then publish it to GitHub packages when a release is created
-# For more inspiration see: https://github.com/sualeh/build-jpackage/blob/master/.github/workflows/build-jpackage.yml
+# This workflow will build installers for multiple OSes using Maven and jpackage, and then publish it to GitHub packages when a release is created.
+# It was inspired by: https://github.com/sualeh/build-jpackage/blob/master/.github/workflows/build-jpackage.yml
 
 name: Build Installers
 
@@ -109,8 +109,7 @@ jobs:
         name: windows-installer
 
     # CREATE GITHUB RELEASE AND ADD ASSETS
-    - id: create-release
-      name: Create GitHub release
+    - name: Create GitHub release
       uses: actions/create-release@latest
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -124,7 +123,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create-release.outputs.upload_url }}
+        upload_url: ${{ github.event.release.upload_url }}
         asset_path: fileanalyzer_2.0-1_amd64.deb
         asset_name: fileanalyzer_2.0-1_amd64.deb
         asset_content_type: application/x-binary
@@ -133,7 +132,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create-release.outputs.upload_url }}
+        upload_url: ${{ github.event.release.upload_url }}
         asset_path: dspacefileanalyzer_2.0-1_amd64.deb
         asset_name: dspacefileanalyzer_2.0-1_amd64.deb
         asset_content_type: application/x-binary
@@ -142,7 +141,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create-release.outputs.upload_url }}
+        upload_url: ${{ github.event.release.upload_url }}
         asset_path: demofileanalyzer_2.0-1_amd64.deb
         asset_name: demofileanalyzer_2.0-1_amd64.deb
         asset_content_type: application/x-binary
@@ -151,7 +150,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create-release.outputs.upload_url }}
+        upload_url: ${{ github.event.release.upload_url }}
         asset_path: FileAnalyzer-2.0.exe
         asset_name: FileAnalyzer-2.0.exe
         asset_content_type: application/x-binary
@@ -160,7 +159,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create-release.outputs.upload_url }}
+        upload_url: ${{ github.event.release.upload_url }}
         asset_path: DSpaceFileAnalyzer-2.0.exe
         asset_name: DSpaceFileAnalyzer-2.0.exe
         asset_content_type: application/x-binary
@@ -169,7 +168,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create-release.outputs.upload_url }}
+        upload_url: ${{ github.event.release.upload_url }}
         asset_path: DemoFileAnalyzer-2.0.exe
         asset_name: DemoFileAnalyzer-2.0.exe
         asset_content_type: application/x-binary
