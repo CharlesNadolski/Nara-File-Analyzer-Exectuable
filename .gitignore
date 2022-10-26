@@ -45,4 +45,4 @@ buildNumber.properties
 
 # JPackage generated installers
 *FileAnalyzer-*.exe
-*FileAnalyzer-*.deb
+*fileanalyzer_*.deb

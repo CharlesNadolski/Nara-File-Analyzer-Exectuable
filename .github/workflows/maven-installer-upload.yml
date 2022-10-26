@@ -28,6 +28,10 @@ jobs:
 
     # BUILD FOR DISTRIBUTION
     - name: Build with Maven
+      # jpackage spits out errors like "dpkg-query: no path found matching pattern /lib/x86_64-linux-gnu/libXi.so.6" yet generates a valid *.deb file.
+      # This is documented at https://vocabhunter.github.io/2021/07/10/installable-java-apps-with-jpackage.html#:~:text=GitHub%20issue.-,Rough%20Edges%3A%20Linux,-The%20Linux%20.deb
+      # and https://bugs.openjdk.org/browse/JDK-8248297
+      continue-on-error: true 
       run: |
         mvn -B package
         jpackage --verbose --app-version 2.0 --input core/target --main-jar CoreFileAnalyzer-2.0.jar --linux-menu-group Utility;FileTools;Java
@@ -114,8 +118,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create-release.outputs.upload_url }}
-        asset_path: FileAnalyzer-2.0.deb
-        asset_name: FileAnalyzer-2.0.deb
+        asset_path: fileanalyzer_2.0-1_amd64.deb
+        asset_name: fileanalyzer_2.0-1_amd64.deb
         asset_content_type: application/x-binary
     - name: Release DSpace Linux installer
       uses: actions/upload-release-asset@latest
@@ -123,8 +127,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create-release.outputs.upload_url }}
-        asset_path: DSpaceFileAnalyzer-2.0.deb
-        asset_name: DSpaceFileAnalyzer-2.0.deb
+        asset_path: dspacefileanalyzer_2.0-1_amd64.deb
+        asset_name: dspacefileanalyzer_2.0-1_amd64.deb
         asset_content_type: application/x-binary
     - name: Release Demo Linux installer
       uses: actions/upload-release-asset@latest
@@ -132,8 +136,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create-release.outputs.upload_url }}
-        asset_path: DemoFileAnalyzer-2.0.deb
-        asset_name: DemoFileAnalyzer-2.0.deb
+        asset_path: demofileanalyzer_2.0-1_amd64.deb
+        asset_name: demofileanalyzer_2.0-1_amd64.deb
         asset_content_type: application/x-binary
     - name: Release Core Windows installer
       uses: actions/upload-release-asset@latest
