@@ -35,7 +35,7 @@ jobs:
       run: |
         mvn -B package
         jpackage --verbose --app-version 2.0 --input core/target --main-jar CoreFileAnalyzer-2.0.jar --linux-menu-group Utility;FileTools;Java
-        jpackage --verbose --app-version 2.0  -input dspace/target --main-jar DSpaceFileAnalyzer-2.0.jar --linux-menu-group Utility;FileTools;Java
+        jpackage --verbose --app-version 2.0 --input dspace/target --main-jar DSpaceFileAnalyzer-2.0.jar --linux-menu-group Utility;FileTools;Java
         jpackage --verbose --app-version 2.0 --input demo/target --main-jar DemoFileAnalyzer-2.0.jar --linux-menu-group Utility;FileTools;Java
 
     # SAVE INSTALLER
@@ -70,7 +70,7 @@ jobs:
       run: |
         mvn -B package
         jpackage --verbose --app-version 2.0 --input core/target --main-jar CoreFileAnalyzer-2.0.jar --win-menu --win-per-user-install
-        jpackage --verbose --app-version 2.0  -input dspace/target --main-jar DSpaceFileAnalyzer-2.0.jar --win-menu --win-per-user-install
+        jpackage --verbose --app-version 2.0 --input dspace/target --main-jar DSpaceFileAnalyzer-2.0.jar --win-menu --win-per-user-install
         jpackage --verbose --app-version 2.0 --input demo/target --main-jar DemoFileAnalyzer-2.0.jar --win-menu --win-per-user-install
         
     # SAVE INSTALLER
