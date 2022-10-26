@@ -27,16 +27,23 @@ jobs:
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
     # BUILD FOR DISTRIBUTION
+    # For Linux, Maven and individual jpackage calls need to be run separately, whereas in Windows they can be chained safely in the same run command.
+    # While jpackage is running, it emits errors like "dpkg-query: no path found matching pattern /lib/x86_64-linux-gnu/libXi.so.6".
+    # This is documented at https://vocabhunter.github.io/2021/07/10/installable-java-apps-with-jpackage.html#:~:text=GitHub%20issue.-,Rough%20Edges%3A%20Linux,-The%20Linux%20.deb
+    # and https://bugs.openjdk.org/browse/JDK-8248297
+    # In spite of this, it generates a valid *.deb file. Subsequently, another error is generated: Command 'Java' not found.
+    # This prevents any further commands to be chained together in the same run.
     - name: Build with Maven
-      # jpackage spits out errors like "dpkg-query: no path found matching pattern /lib/x86_64-linux-gnu/libXi.so.6" yet generates a valid *.deb file.
-      # This is documented at https://vocabhunter.github.io/2021/07/10/installable-java-apps-with-jpackage.html#:~:text=GitHub%20issue.-,Rough%20Edges%3A%20Linux,-The%20Linux%20.deb
-      # and https://bugs.openjdk.org/browse/JDK-8248297
+      run: mvn -B package
+    - name: Package CoreFileAnalyzer
       continue-on-error: true 
-      run: |
-        mvn -B package
-        jpackage --verbose --app-version 2.0 --input core/target --main-jar CoreFileAnalyzer-2.0.jar --linux-menu-group Utility;FileTools;Java
-        jpackage --verbose --app-version 2.0 --input dspace/target --main-jar DSpaceFileAnalyzer-2.0.jar --linux-menu-group Utility;FileTools;Java
-        jpackage --verbose --app-version 2.0 --input demo/target --main-jar DemoFileAnalyzer-2.0.jar --linux-menu-group Utility;FileTools;Java
+      run: jpackage --verbose --app-version 2.0 --input core/target --main-jar CoreFileAnalyzer-2.0.jar --linux-menu-group Utility;FileTools;Java
+    - name: Package DSpaceFileAnalyzer
+      continue-on-error: true 
+      run: jpackage --verbose --app-version 2.0 --input dspace/target --main-jar DSpaceFileAnalyzer-2.0.jar --linux-menu-group Utility;FileTools;Java
+    - name: Package DemoFileAnalyzer
+      continue-on-error: true 
+      run: jpackage --verbose --app-version 2.0 --input demo/target --main-jar DemoFileAnalyzer-2.0.jar --linux-menu-group Utility;FileTools;Java
 
     # SAVE INSTALLER
     - id: upload-installer
