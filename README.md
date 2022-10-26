@@ -25,7 +25,8 @@ This code has been derived from the NARA File Analyzer and Metadata Harvester wh
 
 - Download amd install the most recent LTS release of the [Adoptium Eclipse Temurin JDK](https://adoptium.net/).
 Don't forget to select the option to set the `JAVA_HOME` environment variable.
-- [Install Maven using Chocolatey](https://community.chocolatey.org/packages/maven) or [Install Maven Manually](https://maven.apache.org/download.cgi).
+For Linux, follow <https://askubuntu.com/questions/1375383/how-to-properly-install-temurin-jdk-with-update-alternatives>.
+- For Windows, [Install Maven using Chocolatey](https://community.chocolatey.org/packages/maven) or [Install Maven Manually](https://maven.apache.org/download.cgi).
 - Download and install [VS Code](https://code.visualstudio.com/download).
 - Clone this code to your computer
 - Run `mvn package`
@@ -55,16 +56,25 @@ To read more on all possible flavors of File Analyzer, see <https://github.com/G
 
 ### Testing Deployment Locally
 
-- We will be using [jpackage](https://www.baeldung.com/jar-windows-executables) to wrap the jar build artifacts in OS-specific installable executables.
-- For windows, there is an additional dependency on WiX to create the installer.
-You can [install Wix using Chocolatey](https://community.chocolatey.org/packages/wixtoolset).
+- We will be packaging the jar build artifacts into installers using [jpackage for Windows](https://www.baeldung.com/jar-windows-executables) and [jpackage for Linux](https://www.baeldung.com/java14-jpackage).
+- jpackage has additional dependencies based on your OS.
+For Windows, to use jpackage you need to [install Wix using Chocolatey](https://community.chocolatey.org/packages/wixtoolset).
+For Linux, to use jpackage you need to install the packages `fakeroot` and `binutils`.
 
-For example, to generate installers for each executable jar with a start menu shortcut and local user privileges, run the following.
+On Windows, to generate installers for each executable jar with a start menu shortcut and local user privileges, run the following.
 
 ```bash
 jpackage --verbose --app-version 2.0 --input core/target --main-jar CoreFileAnalyzer-2.0.jar --win-menu --win-per-user-install
 jpackage --verbose --app-version 2.0  -input dspace/target --main-jar DSpaceFileAnalyzer-2.0.jar --win-menu --win-per-user-install
 jpackage --verbose --app-version 2.0 --input demo/target --main-jar DemoFileAnalyzer-2.0.jar --win-menu --win-per-user-install
+```
+
+On Linux, to generate installers for each executable jar with an appropriate menu group, run the following.
+
+```bash
+jpackage --verbose --app-version 2.0 --input core/target --main-jar CoreFileAnalyzer-2.0.jar --linux-menu-group Utility;FileTools;Java
+jpackage --verbose --app-version 2.0  -input dspace/target --main-jar DSpaceFileAnalyzer-2.0.jar --linux-menu-group Utility;FileTools;Java
+jpackage --verbose --app-version 2.0 --input demo/target --main-jar DemoFileAnalyzer-2.0.jar --linux-menu-group Utility;FileTools;Java
 ```
 
 ### Deployment using GitHub
